@@ -2,7 +2,7 @@ package com.metaro.metaro.security.auth.filter;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ohgiraffers.security.auth.model.dto.LoginDto;
+import com.metaro.metaro.security.auth.model.dto.LoginDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,7 +47,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE,true);
         LoginDto user = objectMapper.readValue(request.getInputStream(), LoginDto.class);
 
-        return new UsernamePasswordAuthenticationToken(user.getId(), user.getPass());
+        return new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
     }
 
 }
