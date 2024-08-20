@@ -1,8 +1,6 @@
-create database ohgiraffers;
+create database metaro;
 
-create user ohgiraffers@'%' identified by 'ohgiraffers';
-
-grant all privileges on ohgiraffers.* to ohgiraffers@'%';
+grant all privileges on metaro.* to ohgiraffers@'%';
 
 use ohgiraffers;
 
