@@ -143,27 +143,27 @@ public class MemberService {
         }
 
         // RefreshToken
-        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(token);
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByRefreshToken(token);
 
-        if(refreshToken == null) {
+        if(refreshToken.isEmpty()) {
             throw new ApplicationException(ErrorCode.FAILED_GET_RERFRESH_TOKEN);
         }
 
         // 최초 로그인한 ip와 같은지 확인
         String currentIp = ClientUtils.getClientIp(httpServletRequest);
-        if(!currentIp.equals(refreshToken.getIp())) {
+        if(!currentIp.equals(refreshToken.get().getIp())) {
             throw new ApplicationException(ErrorCode.DIFFERENT_IP_ADDRESS);
         }
 
         // 저장된 RefreshToken 정보를 기반으로 JWT Token 생성
         MemberResponseDTO.authTokenDTO authTokenDTO = jwtTokenProvider.generateToken(
-                String.valueOf(refreshToken.getId()), Collections.singletonList(new SimpleGrantedAuthority(refreshToken.getAuthorities().name()))
+                String.valueOf(refreshToken.get().getId()), Collections.singletonList(new SimpleGrantedAuthority(refreshToken.get().getAuthorities().name()))
         );
 
         // RefreshToken Update
         refreshTokenRepository.save(RefreshToken.builder()
                         .ip(currentIp) // IP 주소를 업데이트
-                        .authorities(refreshToken.getAuthorities())
+                        .authorities(refreshToken.get().getAuthorities())
                         .refreshToken(authTokenDTO.refreshToken())
                 .build());
 
@@ -183,7 +183,13 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.FAILED_VALIDATE__REFRESH_TOKEN);
         }
 
-        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(token);
+        // RefreshToken 조회 및 null 체크
+        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(token)
+                .orElseThrow(() -> {
+                    log.error("Refresh Token 을 얻을 수 없습니다. 토큰: {}", token);
+                    return new ApplicationException(ErrorCode.FAILED_GET_RERFRESH_TOKEN);
+                });
+
         refreshTokenRepository.delete(refreshToken);
     }
 }
