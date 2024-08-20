@@ -9,7 +9,6 @@ import com.metaro.metaro.member.dto.MemberRequestDTO;
 import com.metaro.metaro.member.dto.MemberResponseDTO;
 import com.metaro.metaro.member.repository.MemberRepository;
 import com.metaro.metaro.refreshToken.domain.RefreshToken;
-import com.metaro.metaro.refreshToken.repository.RefreshTokenRedisRepository;
 import com.metaro.metaro.refreshToken.repository.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +17,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Slf4j
@@ -109,10 +110,16 @@ public class MemberService {
 
         MemberResponseDTO.authTokenDTO authTokenDTO = jwtTokenProvider.generateToken(authentication);
 
+        // 단일 권한 추출 (가정: 단일 권한만 부여됨)
+        Authority authority = Authority.NONE; // 기본값
+        if (!authentication.getAuthorities().isEmpty()) {
+            authority = Authority.valueOf(authentication.getAuthorities().iterator().next().getAuthority());
+        }
+
         refreshTokenRepository.save(RefreshToken.builder()
                 .id(authentication.getName())
                 .ip(ClientUtils.getClientIp(httpServletRequest))
-                .authorities(authentication.getAuthorities())
+                .authorities(authority)
                 .refreshToken(authTokenDTO.refreshToken())
                 .build()
         );
@@ -151,7 +158,7 @@ public class MemberService {
 
         // 저장된 RefreshToken 정보를 기반으로 JWT Token 생성
         MemberResponseDTO.authTokenDTO authTokenDTO = jwtTokenProvider.generateToken(
-                refreshToken.getId(), refreshToken.getAuthorities()
+                refreshToken.getId(), Collections.singletonList(new SimpleGrantedAuthority(refreshToken.getAuthorities().name()))
         );
 
         // RefreshToken Update
