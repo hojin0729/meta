@@ -8,8 +8,9 @@ import com.metaro.metaro.member.domain.*;
 import com.metaro.metaro.member.dto.MemberRequestDTO;
 import com.metaro.metaro.member.dto.MemberResponseDTO;
 import com.metaro.metaro.member.repository.MemberRepository;
-import com.metaro.metaro.redis.domain.RefreshToken;
-import com.metaro.metaro.redis.repository.RefreshTokenRedisRepository;
+import com.metaro.metaro.refreshToken.domain.RefreshToken;
+import com.metaro.metaro.refreshToken.repository.RefreshTokenRedisRepository;
+import com.metaro.metaro.refreshToken.repository.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +31,11 @@ import java.util.Optional;
 public class MemberService {
     
     private final MemberRepository memberRepository;
-    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JWTTokenProvider jwtTokenProvider;
-
-    private final String EMAIL_PREFIX = "email:";
-    private final long EMAIL_VALIDATATION_TIME = 7L;
-    private final String VALIDATED_EMAIL_STATUS = "true";
 
     /*
         기본 회원 가입
@@ -112,7 +109,7 @@ public class MemberService {
 
         MemberResponseDTO.authTokenDTO authTokenDTO = jwtTokenProvider.generateToken(authentication);
 
-        refreshTokenRedisRepository.save(RefreshToken.builder()
+        refreshTokenRepository.save(RefreshToken.builder()
                 .id(authentication.getName())
                 .ip(ClientUtils.getClientIp(httpServletRequest))
                 .authorities(authentication.getAuthorities())
@@ -140,7 +137,7 @@ public class MemberService {
         }
 
         // RefreshToken
-        RefreshToken refreshToken = refreshTokenRedisRepository.findByRefreshToken(token);
+        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(token);
 
         if(refreshToken == null) {
             throw new ApplicationException(ErrorCode.FAILED_GET_RERFRESH_TOKEN);
@@ -152,13 +149,13 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.DIFFERENT_IP_ADDRESS);
         }
 
-        // Redis 에 저장된 RefreshToken 정보를 기반으로 JWT Token 생성
+        // 저장된 RefreshToken 정보를 기반으로 JWT Token 생성
         MemberResponseDTO.authTokenDTO authTokenDTO = jwtTokenProvider.generateToken(
                 refreshToken.getId(), refreshToken.getAuthorities()
         );
 
-        // Redis 에 RefreshToken Update
-        refreshTokenRedisRepository.save(RefreshToken.builder()
+        // RefreshToken Update
+        refreshTokenRepository.save(RefreshToken.builder()
                         .id(refreshToken.getId())
                         .ip("")
                         .authorities(refreshToken.getAuthorities())
@@ -181,7 +178,7 @@ public class MemberService {
             throw new ApplicationException(ErrorCode.FAILED_VALIDATE__REFRESH_TOKEN);
         }
 
-        RefreshToken refreshToken = refreshTokenRedisRepository.findByRefreshToken(token);
-        refreshTokenRedisRepository.delete(refreshToken);
+        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(token);
+        refreshTokenRepository.delete(refreshToken);
     }
 }
