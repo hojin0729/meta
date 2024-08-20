@@ -16,7 +16,7 @@ import java.util.Map;
  * 토큰을 관리하기 위한 utils 모음 클래스
  *
  *  yml -> jwt-key, jwt-time 설정이 필요하다.
- *  jwt lib 버전 "io.jsonwebtoken:jjwt:0.9.1" 사용
+ *  jwt lib 버전 "io.jsonwebtoken:jjwt:0.12.3" 사용
  * */
 @Component
 public class TokenUtils {
@@ -76,8 +76,12 @@ public class TokenUtils {
      * @return Claims
      * */
     public static Claims getClaimsFormToken(String token){
-        return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(jwtSecretKey))
-                .parseClaimsJws(token).getBody();
+        Key key = createSignature();
+        return Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
 
@@ -91,8 +95,8 @@ public class TokenUtils {
         JwtBuilder builder = Jwts.builder()
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
-                .setSubject("ohgiraffers token : " + user.getUserNo())
-                .signWith(SignatureAlgorithm.HS256, createSignature())
+                .setSubject("metaro token : " + user.getUserNo())
+                .signWith(createSignature())
                 .setExpiration(expireTime);
         return builder.compact();
     }
