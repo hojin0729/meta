@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -43,7 +43,6 @@ public class MemberService {
      */
     @Transactional
     public void signUp(MemberRequestDTO.signUpDTO requestDTO) {
-
 
 
         // 비밀번호 확인
@@ -117,7 +116,7 @@ public class MemberService {
         }
 
         refreshTokenRepository.save(RefreshToken.builder()
-                .id(authentication.getName())
+                .userName(authentication.getName())
                 .ip(ClientUtils.getClientIp(httpServletRequest))
                 .authorities(authority)
                 .refreshToken(authTokenDTO.refreshToken())
@@ -158,13 +157,12 @@ public class MemberService {
 
         // 저장된 RefreshToken 정보를 기반으로 JWT Token 생성
         MemberResponseDTO.authTokenDTO authTokenDTO = jwtTokenProvider.generateToken(
-                refreshToken.getId(), Collections.singletonList(new SimpleGrantedAuthority(refreshToken.getAuthorities().name()))
+                String.valueOf(refreshToken.getId()), Collections.singletonList(new SimpleGrantedAuthority(refreshToken.getAuthorities().name()))
         );
 
         // RefreshToken Update
         refreshTokenRepository.save(RefreshToken.builder()
-                        .id(refreshToken.getId())
-                        .ip("")
+                        .ip(currentIp) // IP 주소를 업데이트
                         .authorities(refreshToken.getAuthorities())
                         .refreshToken(authTokenDTO.refreshToken())
                 .build());
