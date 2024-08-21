@@ -3,6 +3,8 @@ package com.metaro.metaro.member.controller;
 import com.metaro.metaro._core.utils.ApiUtils;
 import com.metaro.metaro.member.dto.MemberResponseDTO;
 import com.metaro.metaro.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +21,15 @@ import static com.metaro.metaro.member.dto.MemberRequestDTO.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "회원 인증 API", description = "회원 가입, 로그인, 토큰 재발급, 로그아웃 기능을 제공하는 API")
 public class MemberController {
 
     private final MemberService memberService;
 
     /*
-        기본 회원 가입
-     */
+          기본 회원 가입
+       */
+    @Operation(summary = "회원 가입", description = "회원 가입을 처리합니다.")
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody signUpDTO requestDTO) {
 
@@ -33,11 +37,12 @@ public class MemberController {
 
         return ResponseEntity.ok().body(ApiUtils.success(null));
     }
-    
+
 
     /*
-        기본 로그인
-     */
+         기본 로그인
+      */
+    @Operation(summary = "로그인", description = "회원 로그인을 처리하고 인증 토큰을 발급합니다.")
     @PostMapping("/login")
     public ResponseEntity<?> login(HttpServletRequest httpServletRequest, @Valid @RequestBody loginDTO requestDTO) {
 
@@ -47,8 +52,9 @@ public class MemberController {
     }
 
     /*
-        Access Token 재발급 - Refresh Token 필요
-     */
+       Access Token 재발급 - Refresh Token 필요
+    */
+    @Operation(summary = "토큰 재발급", description = "Refresh Token을 사용하여 Access Token을 재발급합니다.")
     @PostMapping("/reissue")
     public ResponseEntity<?> reissueToken(HttpServletRequest httpServletRequest) {
 
@@ -60,6 +66,7 @@ public class MemberController {
     /*
         로그아웃 - Refresh Token 필요
      */
+    @Operation(summary = "로그아웃", description = "Refresh Token을 사용하여 로그아웃을 처리합니다.")
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) {
 
