@@ -3,7 +3,7 @@ server:
     encoding:
       charset: utf-8
       force: true
-  port: 8080
+  port: 8181
 
 spring:
   datasource:
@@ -29,7 +29,7 @@ spring:
             client-secret: phbHwOkx5MW5SsIdu3wRgo59BH9nF2kb
             redirectUri: http://localhost:8080/api/auth/kakao/login
             authorization-grant-type: authorization_code
-            scope: [ profile,account_email ]
+            scope: [ profile, account_email ]
         provider:
           kakao:
             authorization-uri: https://kauth.kakao.com/oauth/authorize
@@ -44,3 +44,7 @@ logging:
   level:
     '[company.gonggam]': DEBUG
     '[org.hibernate.type]': TRACE
+
+python:
+  server:
+    url: http://localhost:8000

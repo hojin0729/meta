@@ -23,6 +23,7 @@ public class MemberSocialLoginController {
      */
     @GetMapping("/kakao/login")
     public ResponseEntity<?> kakaoLogin(@RequestParam(name = "code") String code) {
+        System.out.println("code: " + code);
         MemberResponseDTO.authTokenDTO responseDTO = memberSocialLoginService.kakaoLogin(code);
         System.out.println("ResponseDTO : " + responseDTO);
         return ResponseEntity.ok().body(ApiUtils.success(responseDTO));
