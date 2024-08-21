@@ -32,15 +32,12 @@ public class TarotRequestDTO {
         @JsonProperty("isReversed")
         private boolean isReversed;
 
-        @JsonCreator
-        public Card(@JsonProperty("cardNumber") int cardNumber, @JsonProperty("isReversed") boolean isReversed) {
+        // 기본 생성자
+        public Card() {}
+
+        public Card(int cardNumber, boolean isReversed) {
             this.cardNumber = cardNumber;
             this.isReversed = isReversed;
-        }
-
-        @JsonCreator
-        public static Card fromArray(Object[] arr) {
-            return new Card((int) arr[0], (boolean) arr[1]);
         }
     }
 }
