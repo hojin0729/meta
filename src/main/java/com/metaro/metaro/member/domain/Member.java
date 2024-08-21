@@ -20,18 +20,22 @@ public class Member extends BaseTimeEntity {
 
     @Column(length = 20, nullable = false)
     private String name;
+
     @Column(length = 100, nullable = false, unique = true)
     private String email;
+
     @Column(length = 100, nullable = false)
     private String password;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'NONE'")
     private SocialType socialType;
+
     @Enumerated(value = EnumType.STRING)
     @ColumnDefault("'USER'")
     private Authority authority;

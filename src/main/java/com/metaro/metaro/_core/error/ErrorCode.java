@@ -26,19 +26,7 @@ public enum ErrorCode {
     FAILED_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "AUTH-001", "인증에 실패하였습니다."),
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH-002", "접근이 거부되었습니다."),
     DIFFERENT_IP_ADDRESS(HttpStatus.BAD_REQUEST, "AUTH-003", "기존 IP 주소와 다른 IP 주소에서의 요청입니다."),
-    ANONYMOUS_USER(HttpStatus.UNAUTHORIZED, "AUTH-004", "익명의 유저가 접근하였습니다."),
-    CANT_LOAD_MBTI_INTERIM_RESULT(HttpStatus.BAD_REQUEST, "MBTI-001", "중간 결과 없이 최종 결과를 가져올 수 없습니다."),
-    FAILED_GET_MASCOT_BY_TYPE(HttpStatus.BAD_REQUEST, "MASCOT-001", "해당 MBTI Type 의 Mascot 를 가져올 수 없습니다."),
-    FAILED_GET_MEMBER_BY_ID(HttpStatus.BAD_REQUEST, "MEMBER-001", "해당 ID의 Member 를 조회할 수 없습니다."),
-    NOT_ALL_QUESTIONS_ANSWERED(HttpStatus.BAD_REQUEST, "MBTI-002", "질문에 대한 답변이 비어있습니다.");
-
-    /*
-        예시)
-        SAME_EMAIL(HttpStatus.CONFLICT, "USER-001", "이미 가입한 이메일입니다.")
-        EMAIL_STRUCTURE(HttpStatus.FORBIDDEN,"USER-002","이메일 형식으로 작성해주세요")
-
-        이렇게 여기 정의하고 throw new ApplicationException(ErrorCode.SAME_EMAIL); 던지면 됨
-    */
+    ANONYMOUS_USER(HttpStatus.UNAUTHORIZED, "AUTH-004", "익명의 유저가 접근하였습니다.");
 
     private HttpStatus status;
     private String errorCode;

@@ -191,5 +191,6 @@ public class MemberService {
                 });
 
         refreshTokenRepository.delete(refreshToken);
+        log.info("로그아웃 성공");
     }
 }
