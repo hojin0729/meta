@@ -7,6 +7,7 @@ import com.metaro.metaro.tarot.service.TarotResponseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,13 +17,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/tarot")
+@Tag(name = "타로 API", description = "타로 리딩 제출 및 히스토리 불러오기 기능을 제공하는 API")
 public class TarotController {
 
     private final RestTemplate restTemplate = new RestTemplate();

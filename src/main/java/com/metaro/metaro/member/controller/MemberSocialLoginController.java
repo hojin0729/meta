@@ -3,6 +3,7 @@ package com.metaro.metaro.member.controller;
 import com.metaro.metaro._core.utils.ApiUtils;
 import com.metaro.metaro.member.dto.MemberResponseDTO;
 import com.metaro.metaro.member.service.MemberSocialLoginService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "카카오 회원 API", description = "소셜 로그인 및 회원가입 기능을 제공하는 API")
 public class MemberSocialLoginController {
 
     private final MemberSocialLoginService memberSocialLoginService;
