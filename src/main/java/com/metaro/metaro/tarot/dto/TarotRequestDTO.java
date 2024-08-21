@@ -1,74 +1,39 @@
 package com.metaro.metaro.tarot.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+import java.util.List;
+
+@Data
 public class TarotRequestDTO {
 
-    @NotNull
-    private Boolean master;
+    @JsonProperty("choice_master")
+    private boolean choiceMaster;
 
-    @NotBlank
-    private String card1;
+    private String agenda;
 
-    @NotBlank
-    private String card2;
+    @JsonProperty("input_text")
+    private String inputText;
 
-    @NotBlank
-    private String card3;
+    private List<Card> card;
+    private List<String> history;
 
-    @NotBlank
-    private String question;
+    @Data
+    public static class Card {
+        private int cardNumber;
+        private boolean isReversed;
 
-    @NotBlank
-    private String mbti;
+        @JsonCreator
+        public Card(@JsonProperty("cardNumber") int cardNumber, @JsonProperty("isReversed") boolean isReversed) {
+            this.cardNumber = cardNumber;
+            this.isReversed = isReversed;
+        }
 
-    // Getters and Setters
-    public Boolean getMaster() {
-        return master;
-    }
-
-    public void setMaster(Boolean master) {
-        this.master = master;
-    }
-
-    public String getCard1() {
-        return card1;
-    }
-
-    public void setCard1(String card1) {
-        this.card1 = card1;
-    }
-
-    public String getCard2() {
-        return card2;
-    }
-
-    public void setCard2(String card2) {
-        this.card2 = card2;
-    }
-
-    public String getCard3() {
-        return card3;
-    }
-
-    public void setCard3(String card3) {
-        this.card3 = card3;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getMbti() {
-        return mbti;
-    }
-
-    public void setMbti(String mbti) {
-        this.mbti = mbti;
+        @JsonCreator
+        public static Card fromArray(Object[] arr) {
+            return new Card((int) arr[0], (boolean) arr[1]);
+        }
     }
 }

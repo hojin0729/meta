@@ -46,6 +46,14 @@ public class JWTTokenProvider {
     }
 
     public MemberResponseDTO.authTokenDTO generateToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        if (authorities.isEmpty()) {
+            throw new RuntimeException("권한 정보가 없는 토큰을 생성할 수 없습니다.");
+        }
+
         return generateToken(authentication.getName(), authentication.getAuthorities());
     }
 
@@ -114,11 +122,11 @@ public class JWTTokenProvider {
 
         Claims claims = parseClaims(token);
 
-        // 권한 정보가 없으면 예외
-        if (claims.get(AUTHORITIES_KEY) == null) {
+        // 권한 정보가 없으면 기본 권한을 할당하거나 예외 처리
+        String authoritiesClaim = claims.get(AUTHORITIES_KEY) != null ? claims.get(AUTHORITIES_KEY).toString() : "";
+        if (authoritiesClaim.isEmpty()) {
             throw new RuntimeException("권한 정보가 없는 Token 입니다.");
         }
-
         // 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
