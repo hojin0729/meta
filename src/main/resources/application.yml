@@ -20,15 +20,25 @@ spring:
         format_sql: true
       default_batch_fetch_size: 100
     open-in-view: false
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            clientId: 262c56061ee06d4004d2f9b94db133a4
+            client-secret: phbHwOkx5MW5SsIdu3wRgo59BH9nF2kb
+            redirectUri: http://localhost:8080/api/auth/kakao/login
+            authorization-grant-type: authorization_code
+            scope: [ profile,account_email ]
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            tokenUri: https://kauth.kakao.com/oauth/token
+            userInfoUri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
 jwt:
   secret: 7ZmA656AIOuTneygkOyZlSDquLDsm5AgMeydvOywqALdlsKJL3234jklsdjfaKJDLnflkasdf
-
-kakao:
-  token-uri: https://kauth.kakao.com/oauth/token
-  user-info-uri: https://kapi.kakao.com/v2/user/me
-  grant-type: authorization_code
-  client-id: 049ebf43b54fe431e060d0aa0a8e39af
-  redirect-uri: http://localhost:8080/api/auth/kakao/login
 
 logging:
   level:

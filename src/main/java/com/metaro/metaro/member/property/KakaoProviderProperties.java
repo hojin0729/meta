@@ -6,11 +6,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "kakao")
-public class KakaoProperties {
+@ConfigurationProperties(prefix = "spring.security.oauth2.client.provider.kakao")
+public class KakaoProviderProperties {
     private String tokenUri;
     private String userInfoUri;
-    private String grantType;
-    private String clientId;
-    private String redirectUri;
 }

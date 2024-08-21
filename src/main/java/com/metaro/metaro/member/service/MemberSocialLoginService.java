@@ -5,7 +5,8 @@ import com.metaro.metaro._core.error.ErrorCode;
 import com.metaro.metaro._core.jwt.JWTTokenProvider;
 import com.metaro.metaro.member.domain.*;
 import com.metaro.metaro.member.dto.MemberResponseDTO;
-import com.metaro.metaro.member.property.KakaoProperties;
+import com.metaro.metaro.member.property.KakaoProviderProperties;
+import com.metaro.metaro.member.property.KakaoRegistrationProperties;
 import com.metaro.metaro.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,11 +40,12 @@ public class MemberSocialLoginService {
     private final MemberService memberService;
 
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JWTTokenProvider jwtTokenProvider;
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final KakaoProperties kakaoProperties;
+    private final KakaoProviderProperties KakaoProviderProperties;
+    private final KakaoRegistrationProperties kakaoRegistrationProperties;
+
 
     /*
         카카오 로그인
@@ -51,12 +53,13 @@ public class MemberSocialLoginService {
     // 카카오로부터 받은 최신 사용자 정보로 데이터베이스 내의 사용자 정보를 갱신할 필요가 있을까?
     @Transactional
     public MemberResponseDTO.authTokenDTO kakaoLogin(String code) {
-
+        System.out.println("kakaoLogin 시작");
         // 토큰 발급
         String accessToken = generateAccessToken(code);
 
         // 사용자 정보
         MemberResponseDTO.KakaoInfoDTO profile = getKakaoProfile(accessToken);
+        System.out.println("프로필 " + profile);
 
         // 회원 확인
         Member member = memberService.findMemberByEmail(profile.kakaoAccount().email())
@@ -66,19 +69,18 @@ public class MemberSocialLoginService {
     }
 
     private String generateAccessToken(String code) {
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", kakaoProperties.getGrantType());
-        params.add("client_id", kakaoProperties.getClientId());
-        params.add("redirect_uri", kakaoProperties.getRedirectUri());
+        params.add("grant_type", kakaoRegistrationProperties.getAuthorizationGrantType());
+        params.add("client_id", kakaoRegistrationProperties.getClientId());
+        params.add("redirect_uri", kakaoRegistrationProperties.getRedirectUri());
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
         ResponseEntity<MemberResponseDTO.KakaoTokenDTO> response = restTemplate.postForEntity(
-                kakaoProperties.getTokenUri(),
+                KakaoProviderProperties.getTokenUri(),
                 httpEntity,
                 MemberResponseDTO.KakaoTokenDTO.class
         );
@@ -97,7 +99,7 @@ public class MemberSocialLoginService {
         headers.setBearerAuth(accessToken);
 
         ResponseEntity<MemberResponseDTO.KakaoInfoDTO> response = restTemplate.postForEntity(
-                kakaoProperties.getUserInfoUri(),
+                KakaoProviderProperties.getUserInfoUri(),
                 new HttpEntity<>(headers),
                 MemberResponseDTO.KakaoInfoDTO.class
         );
