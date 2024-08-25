@@ -3,14 +3,14 @@ server:
     encoding:
       charset: utf-8
       force: true
-  port: 8181
+  port: 8080
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/metaro
+    url: jdbc:mysql://localhost:3306/campwithmedb
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ohgiraffers
-    password: ohgiraffers
+    username: campwithme
+    password: campwithme
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,9 +25,9 @@ spring:
       client:
         registration:
           kakao:
-            clientId: 262c56061ee06d4004d2f9b94db133a4
-            client-secret: phbHwOkx5MW5SsIdu3wRgo59BH9nF2kb
-            redirect_uri: http://172.16.17.66:8181/api/auth/kakao/login
+            clientId: 0a557f7be997372534d371890da6767a
+            client-secret: atQW4yv8wljWZ07iBgYyV07fbOlzCFLb
+            redirect_uri: http://localhost:8080/api/auth/kakao/login
             authorization-grant-type: authorization_code
             scope: [ profile, account_email ]
         provider:
